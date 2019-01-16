@@ -1,0 +1,83 @@
+{
+    "name": "create-redux-actions",
+    "version": "1.0.0",
+    "description": "Module reducer",
+    "main": "lib/index.js",
+    "scripts": {
+        "test": "jest",
+        "lint": "xo src !src/**/*.spec.js !src/**/*.test.js",
+        "build": "run-s clean && run-p build:**",
+        "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\",\"src/**/__tests__\",\"src/**/__mocks__\"",
+        "clean": "rimraf coverage dist es lib",
+        "format": "prettier --write \"**/*.{js,md}\"",
+        "prepublishOnly": "run-s build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@bitbucket.org/ron9419/create-redux-actions.git"
+    },
+    "keywords": [],
+    "author": "ronald gipa",
+    "license": "ISC",
+    "homepage": "https://bitbucket.org/ron9419/create-redux-actions#readme",
+    "dependencies": {},
+    "devDependencies": {
+        "@babel/cli": "^7.2.3",
+        "@babel/core": "^7.2.2",
+        "@babel/preset-env": "^7.2.3",
+        "babel-core": "^7.0.0-bridge.0",
+        "babel-jest": "^23.6.0",
+        "babel-preset-env": "^1.7.0",
+        "cross-env": "^5.2.0",
+        "eslint": "^5.12.0",
+        "eslint-config-jest-files": "^0.1.3",
+        "eslint-config-unicorn-camelcase": "^0.1.1",
+        "eslint-plugin-prettier": "^3.0.1",
+        "husky": "^1.3.1",
+        "jasmine-check": "^1.0.0-rc.0",
+        "jest": "^23.6.0",
+        "lint-staged": "^8.1.0",
+        "npm-run-all": "^4.1.5",
+        "parcel-bundler": "^1.11.0",
+        "prettier": "^1.15.3",
+        "ramda": "^0.26.1",
+        "redux": "^4.0.1",
+        "regenerator-runtime": "^0.13.1",
+        "rimraf": "^2.6.3",
+        "xo": "^0.23.0"
+    },
+    "xo": {
+        "prettier": true,
+        "space": true,
+        "extends": [
+            "unicorn-camelcase",
+            "jest-files"
+        ]
+    },
+    "eslintConfig": {
+        "extends": "jest-files",
+        "overrides": [
+            {
+                "files": [
+                    "*-test.js",
+                    "*.spec.js"
+                ]
+            }
+        ]
+    },
+    "files": [
+        "es",
+        "lib",
+        "dist",
+        "src"
+    ],
+    "jest": {
+        "verbose": true,
+        "collectCoverage": true
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run lint && npm test -o"
+        }
+    }
+}
