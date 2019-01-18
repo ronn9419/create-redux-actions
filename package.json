@@ -18,7 +18,7 @@
     },
     "keywords": [],
     "author": "ronald gipa",
-    "license": "ISC",
+    "license": "MIT",
     "homepage": "https://bitbucket.org/ron9419/create-redux-actions#readme",
     "dependencies": {},
     "devDependencies": {
