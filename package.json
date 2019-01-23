@@ -14,12 +14,18 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@bitbucket.org/ron9419/create-redux-actions.git"
+        "url": "git+ssh://git@github.com:ronn9419/create-redux-actions.git"
     },
-    "keywords": [],
+    "keywords": [
+        "flux",
+        "redux",
+        "fsa",
+        "action",
+        "reducer"
+    ],
     "author": "ronald gipa",
     "license": "MIT",
-    "homepage": "https://bitbucket.org/ron9419/create-redux-actions#readme",
+    "homepage": "https://github.com/ronn9419/create-redux-actions#readme",
     "dependencies": {},
     "devDependencies": {
         "@babel/cli": "^7.2.3",
