@@ -10,7 +10,6 @@
         "build": "run-s clean && run-p build:**",
         "build:esm": "cross-env BABEL_ENV=esm babel src --out-dir es --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\",\"src/**/__tests__\",\"src/**/__mocks__\"",
         "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\",\"src/**/__tests__\",\"src/**/__mocks__\"",
-        "build:umd": "parcel build src/index.js",
         "clean": "rimraf coverage dist es lib",
         "format": "prettier --write \"**/*.{js,md}\"",
         "prepublishOnly": "run-s build"
