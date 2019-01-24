@@ -4,6 +4,7 @@ import isObject from './utils/isObject'
 import isArray from './utils/isArray'
 import isString from './utils/isString'
 import isFunction from './utils/isFunction'
+import merge from './utils/merge'
 
 const defaultPayloadMetaCreator = (arg1, arg2, arg3) => [arg1, arg2, arg3]
 
@@ -62,37 +63,51 @@ const createActionWithActions = (type, actionsCreator) => {
 
 /**
  *
- * @param {*} actions
  * @param {*} namespace
+ * @param {*} actions
  * @param {*} options
+ * @param {*} rootAction
  * @return {*}
  */
 function recursiveCreateActions(namespace, actions, options, rootAction) {
     return Object.keys(actions).reduce(
         (acc, type) => {
+            if (type === '_options') {
+                return acc
+            }
+
+            const _options = merge(options, actions._options) || options
+            const _type = _options.transform(type)
+
             if (isArray(actions[type])) {
-                acc[type] = recursiveCreateActions(
-                    `${options.separator}${type}`,
-                    actions[type][0],
-                    actions[type][1] || options,
-                    actions
-                )
+                const formattedType = `${namespace}${_options.separator}${
+                    _options.prefix
+                }${_type}${_options.suffix}`
+
+                acc[type] = createActionWithActions(formattedType, () => {
+                    return recursiveCreateActions(
+                        formattedType,
+                        actions[type][0],
+                        merge(_options, actions[type][1] || {}),
+                        actions
+                    )
+                })
             } else if (isObject(actions[type])) {
-                const formattedType = `${namespace}${options.separator}${
-                    options.prefix
-                }${type}${options.suffix}`
+                const formattedType = `${namespace}${_options.separator}${
+                    _options.prefix
+                }${_type}${_options.suffix}`
                 acc[type] = createActionWithActions(formattedType, () => {
                     return recursiveCreateActions(
                         formattedType,
                         actions[type],
-                        options,
+                        _options,
                         actions
                     )
                 })
             } else if (isFunction(actions[type])) {
-                const formattedType = `${namespace}${options.separator}${
-                    options.prefix
-                }${type}${options.suffix}`
+                const formattedType = `${namespace}${_options.separator}${
+                    _options.prefix
+                }${_type}${_options.suffix}`
                 acc[type] = createAction(formattedType, actions[type])
             }
 
@@ -105,7 +120,8 @@ function recursiveCreateActions(namespace, actions, options, rootAction) {
 const defaultOptions = {
     suffix: '',
     prefix: '',
-    separator: '/'
+    separator: '/',
+    transform: key => key
 }
 
 /**
@@ -115,8 +131,15 @@ const defaultOptions = {
  * @param {Object} [options]
  * @return {*}
  */
-export function createActions(namespace, actions, options = defaultOptions) {
-    const formattedNamespace = `${options.prefix}${namespace}${options.suffix}`
+export function createActions(namespace, actions, options = {}) {
+    let _options = defaultOptions
+    if (isArray(actions)) {
+        _options = merge(_options, options)
+    } else {
+        _options = merge(_options, options, actions._options || {})
+    }
+
+    const formattedNamespace = namespace
 
     const rootAction = createAction(formattedNamespace)
 
@@ -124,7 +147,7 @@ export function createActions(namespace, actions, options = defaultOptions) {
         return recursiveCreateActions(
             formattedNamespace,
             actions[0],
-            actions[1] || options,
+            merge(_options, actions[1] || {}),
             rootAction
         )
     }
@@ -132,7 +155,7 @@ export function createActions(namespace, actions, options = defaultOptions) {
     return recursiveCreateActions(
         formattedNamespace,
         actions,
-        options,
+        _options,
         rootAction
     )
 }
@@ -146,6 +169,6 @@ export default (arg1, arg2, arg3) => {
     }
 
     if (isString(arg1) && (isObject(arg2) || isArray(arg2))) {
-        return createActions(arg1, arg2, arg3)
+        return createActions(arg1, arg2, merge(defaultOptions, arg3 || {}))
     }
 }

@@ -193,9 +193,9 @@ describe('createActions module', () => {
                 prefix: '[',
                 separator: '/'
             }
-            const type = `${options.prefix}${namespace}${options.suffix}${
-                options.separator
-            }${options.prefix}dialog${options.suffix}`
+            const type = `${namespace}${options.separator}${
+                options.prefix
+            }dialog${options.suffix}`
 
             const actionCreators = createActions(
                 namespace,
@@ -215,7 +215,7 @@ describe('createActions module', () => {
             })
         })
 
-        it('creates an action using array', () => {
+        it('creates an action using array [DEPRECATED]', () => {
             const namespace = 'my-action'
             const options1 = {
                 suffix: ']',
@@ -229,13 +229,13 @@ describe('createActions module', () => {
                 separator: '-'
             }
 
-            const type = `${options1.prefix}${namespace}${options1.suffix}${
-                options2.separator
-            }${options2.prefix}dialog${options2.suffix}`
+            const type = `${namespace}${options2.separator}${
+                options2.prefix
+            }dialog${options2.suffix}`
 
-            const type2 = `${options1.prefix}${namespace}${options1.suffix}${
-                options2.separator
-            }${options2.prefix}alert${options2.suffix}`
+            const type2 = `${namespace}${options2.separator}${
+                options2.prefix
+            }alert${options2.suffix}`
 
             const actionCreators = createActions(
                 namespace,
@@ -285,9 +285,9 @@ describe('createActions module', () => {
                 options
             )
 
-            const type = `${options.prefix}${namespace}${options.suffix}${
-                options.separator
-            }${options.prefix}dialog${options.suffix}`
+            const type = `${namespace}${options.separator}${
+                options.prefix
+            }dialog${options.suffix}`
 
             expect(actionCreators).toHaveProperty('dialog')
             expect(actionCreators.dialog).toHaveProperty('open')
@@ -318,6 +318,56 @@ describe('createActions module', () => {
                 type: `${type}${options.separator}toggle`,
                 payload: 'toggle',
                 meta: false
+            })
+        })
+
+        it.only('support _options', () => {
+            const namespace = 'my-namespace'
+
+            const actionCreators = createActions(
+                namespace,
+                {
+                    dialog: {
+                        open: {},
+                        close: {},
+                        _options: {
+                            prefix: '[',
+                            separator: '/',
+                            transform: key => key.toUpperCase()
+                        }
+                    },
+                    other: {
+                        test: {}
+                    },
+                    _options: {
+                        prefix: '<',
+                        suffix: '>',
+                        transform: key => `key:${key}`
+                    }
+                },
+                {
+                    separator: ':'
+                }
+            )
+
+            expect(actionCreators()).toEqual({
+                type: 'my-namespace'
+            })
+
+            expect(actionCreators.dialog()).toEqual({
+                type: 'my-namespace:<key:dialog>'
+            })
+
+            expect(actionCreators.dialog.open()).toEqual({
+                type: 'my-namespace:<key:dialog>/[OPEN>'
+            })
+
+            expect(actionCreators.other()).toEqual({
+                type: 'my-namespace:<key:other>'
+            })
+
+            expect(actionCreators.other.test()).toEqual({
+                type: 'my-namespace:<key:other>:<key:test>'
             })
         })
     })
