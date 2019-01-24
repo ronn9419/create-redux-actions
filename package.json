@@ -76,7 +76,6 @@
     "files": [
         "es",
         "lib",
-        "dist",
         "src"
     ],
     "jest": {
