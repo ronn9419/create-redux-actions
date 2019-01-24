@@ -8,7 +8,7 @@ You can easily create actions by using `createActions`.
 
 ### Example:
 
-```
+```js
     import { createActions } from "create-redux-actions"
 
     // create action
@@ -26,7 +26,7 @@ You can easily create actions by using `createActions`.
 -   The code above will generate 2 action, `action.action1` and `action.action2`
 -   Both will share the same namespace in their type but to make them different, their key will be attached at the end separated by `/`.
 
-```
+```js
    action.action1("sample-payload", "sample-meta")
    /*   action1 returns:
     *   {
@@ -52,7 +52,7 @@ You can easily handle created actions by using `handleActions`.
 
 ### Example:
 
-```
+```js
     import { handleActions } from "create-redux-actions"
     import action from "./action"
 
