@@ -12,9 +12,9 @@ import {
     key as nestedActionsKey
 } from './modules/handleNestedActions'
 import {
-    multiHandler,
+    combineActionsHandler,
     key as multiActionsKey
-} from './modules/handleMultiActions'
+} from './modules/handleCombineActions'
 import { pathHandler, key as pathKey } from './modules/handleDynamicState'
 import {
     apiRequestHandler,
@@ -23,7 +23,7 @@ import {
 
 const handlersKeyMap = {
     [nestedActionsKey]: nestedHandler,
-    [multiActionsKey]: multiHandler,
+    [multiActionsKey]: combineActionsHandler,
     [pathKey]: pathHandler,
     [apiRequestKey]: apiRequestHandler
 }

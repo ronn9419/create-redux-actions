@@ -48,7 +48,7 @@ Object.defineProperty(exports, "nested", {
 Object.defineProperty(exports, "multi", {
   enumerable: true,
   get: function get() {
-    return _handleMultiActions.multi;
+    return _handleCombineActions.multi;
   }
 });
 Object.defineProperty(exports, "apiRequest", {
@@ -74,7 +74,7 @@ var _config = require("./config");
 
 var _handleNestedActions = require("./modules/handleNestedActions");
 
-var _handleMultiActions = require("./modules/handleMultiActions");
+var _handleCombineActions = require("./modules/handleCombineActions");
 
 var _handleApiRequest = require("./modules/handleApiRequest");
 

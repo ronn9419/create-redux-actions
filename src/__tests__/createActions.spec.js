@@ -215,7 +215,7 @@ describe('createActions module', () => {
             })
         })
 
-        it.only('creates actions using array', () => {
+        it('creates actions using array', () => {
             const action = createActions('namespace', {
                 dialog: [
                     (arg1, arg2) => [{ arg1, arg2 }, arg2],

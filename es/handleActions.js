@@ -22,7 +22,7 @@ var _createCustomKey = require("./modules/createCustomKey");
 
 var _handleNestedActions = require("./modules/handleNestedActions");
 
-var _handleMultiActions = require("./modules/handleMultiActions");
+var _handleCombineActions = require("./modules/handleCombineActions");
 
 var _handleDynamicState = require("./modules/handleDynamicState");
 
@@ -42,7 +42,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var handlersKeyMap = (_handlersKeyMap = {}, _defineProperty(_handlersKeyMap, _handleNestedActions.key, _handleNestedActions.nestedHandler), _defineProperty(_handlersKeyMap, _handleMultiActions.key, _handleMultiActions.multiHandler), _defineProperty(_handlersKeyMap, _handleDynamicState.key, _handleDynamicState.pathHandler), _defineProperty(_handlersKeyMap, _handleApiRequest.key, _handleApiRequest.apiRequestHandler), _handlersKeyMap); // Create-redux-actions module name
+var handlersKeyMap = (_handlersKeyMap = {}, _defineProperty(_handlersKeyMap, _handleNestedActions.key, _handleNestedActions.nestedHandler), _defineProperty(_handlersKeyMap, _handleCombineActions.key, _handleCombineActions.combineActionsHandler), _defineProperty(_handlersKeyMap, _handleDynamicState.key, _handleDynamicState.pathHandler), _defineProperty(_handlersKeyMap, _handleApiRequest.key, _handleApiRequest.apiRequestHandler), _handlersKeyMap); // Create-redux-actions module name
 
 /**
  *
@@ -188,7 +188,7 @@ var _default = function _default(handlers) {
 // // multiple action
 // const reducer = handleActions({
 //     // will be called if either one of them was dispatched
-//     [multi('action1', 'action2')]: (state, action) => ({
+//     [combineActions'action1', 'action2')]: (state, action) => ({
 //         isOpen: false
 //     })
 // }, initialState)
@@ -233,7 +233,7 @@ var _default = function _default(handlers) {
 // ex.
 // {
 //      [path('session', 'selected')]: {
-//          multi('')
+//          combineActions'')
 //      }
 //
 //      [nested(action)]: {
