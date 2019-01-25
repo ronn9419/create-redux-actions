@@ -48,8 +48,12 @@ export function createAction(
  * @param {*} type
  * @param {*} actionsCreator
  */
-const createActionWithActions = (type, actionsCreator) => {
-    const fn = createAction(type)
+const createActionWithActions = (
+    type,
+    actionsCreator,
+    payloadMetaCreator = defaultPayloadMetaCreator
+) => {
+    const fn = createAction(type, payloadMetaCreator)
 
     const funcProps = actionsCreator()
 
@@ -76,38 +80,43 @@ function recursiveCreateActions(namespace, actions, options, rootAction) {
                 return acc
             }
 
-            const _options = merge(options, actions._options) || options
-            const _type = _options.transform(type)
+            const _type = options.transform(type)
+
+            const formattedType = `${namespace}${options.prefix}${_type}${
+                options.suffix
+            }`
 
             if (isArray(actions[type])) {
-                const formattedType = `${namespace}${_options.separator}${
-                    _options.prefix
-                }${_type}${_options.suffix}`
-
-                acc[type] = createActionWithActions(formattedType, () => {
-                    return recursiveCreateActions(
-                        formattedType,
-                        actions[type][0],
-                        merge(_options, actions[type][1] || {}),
-                        actions
-                    )
-                })
+                acc[type] = createActionWithActions(
+                    formattedType,
+                    () => {
+                        return recursiveCreateActions(
+                            `${formattedType}${options.separator}`,
+                            actions[type][1],
+                            merge(
+                                options,
+                                actions._options || {},
+                                actions[type][1]._options || {}
+                            ),
+                            actions
+                        )
+                    },
+                    actions[type][0]
+                )
             } else if (isObject(actions[type])) {
-                const formattedType = `${namespace}${_options.separator}${
-                    _options.prefix
-                }${_type}${_options.suffix}`
                 acc[type] = createActionWithActions(formattedType, () => {
                     return recursiveCreateActions(
-                        formattedType,
+                        `${formattedType}${options.separator}`,
                         actions[type],
-                        _options,
+                        merge(
+                            options,
+                            actions._options || {},
+                            actions[type]._options || {}
+                        ),
                         actions
                     )
                 })
             } else if (isFunction(actions[type])) {
-                const formattedType = `${namespace}${_options.separator}${
-                    _options.prefix
-                }${_type}${_options.suffix}`
                 acc[type] = createAction(formattedType, actions[type])
             }
 
@@ -131,31 +140,17 @@ const defaultOptions = {
  * @param {Object} [options]
  * @return {*}
  */
-export function createActions(namespace, actions, options = {}) {
-    let _options = defaultOptions
-    if (isArray(actions)) {
-        _options = merge(_options, options)
-    } else {
-        _options = merge(_options, options, actions._options || {})
-    }
-
-    const formattedNamespace = namespace
+export function createActions(namespace, actions, options = defaultOptions) {
+    const formattedNamespace = `${options.prefix}${options.transform(
+        namespace
+    )}${options.suffix}`
 
     const rootAction = createAction(formattedNamespace)
 
-    if (isArray(actions)) {
-        return recursiveCreateActions(
-            formattedNamespace,
-            actions[0],
-            merge(_options, actions[1] || {}),
-            rootAction
-        )
-    }
-
     return recursiveCreateActions(
-        formattedNamespace,
+        `${formattedNamespace}${options.separator}`,
         actions,
-        _options,
+        merge(options, actions._options || {}),
         rootAction
     )
 }

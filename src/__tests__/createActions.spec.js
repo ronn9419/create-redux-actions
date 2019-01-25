@@ -190,19 +190,19 @@ describe('createActions module', () => {
             const namespace = 'my-action'
             const options = {
                 suffix: ']',
-                prefix: '[',
-                separator: '/'
+                prefix: '['
             }
-            const type = `${namespace}${options.separator}${
-                options.prefix
-            }dialog${options.suffix}`
+            const type = `${namespace}/${options.prefix}dialog${options.suffix}`
 
             const actionCreators = createActions(
                 namespace,
                 {
-                    dialog: () => [123, 456]
+                    dialog: () => [123, 456],
+                    _options: options
                 },
-                options
+                {
+                    separator: '/'
+                }
             )
 
             expect(actionCreators).toHaveProperty('dialog')
@@ -215,55 +215,50 @@ describe('createActions module', () => {
             })
         })
 
-        it('creates an action using array [DEPRECATED]', () => {
-            const namespace = 'my-action'
-            const options1 = {
-                suffix: ']',
-                prefix: '[',
-                separator: '/'
-            }
-
-            const options2 = {
-                suffix: '>',
-                prefix: '<',
-                separator: '-'
-            }
-
-            const type = `${namespace}${options2.separator}${
-                options2.prefix
-            }dialog${options2.suffix}`
-
-            const type2 = `${namespace}${options2.separator}${
-                options2.prefix
-            }alert${options2.suffix}`
-
-            const actionCreators = createActions(
-                namespace,
-                [
+        it.only('creates actions using array', () => {
+            const action = createActions('namespace', {
+                dialog: [
+                    (arg1, arg2) => [{ arg1, arg2 }, arg2],
                     {
-                        dialog: () => [111, 222],
-                        alert: payload => [payload, 444]
-                    },
-                    options2
+                        open: {},
+                        close: [
+                            (arg1, arg2) => [{ data: arg1 }, { data: arg2 }],
+                            {
+                                do: {},
+                                _options: {
+                                    suffix: '>',
+                                    transform: key => key.toUpperCase()
+                                }
+                            }
+                        ],
+                        _options: {
+                            prefix: '<',
+                            separator: '*',
+                            transform: key => `xxx${key}xxx`
+                        }
+                    }
                 ],
-                options1
-            )
-
-            expect(actionCreators).toHaveProperty('dialog')
-            expect(actionCreators).toHaveProperty('alert')
-            testActionCreator(actionCreators.dialog, type)
-            testActionCreator(actionCreators.alert, type2)
-
-            expect(actionCreators.dialog('abc')).toEqual({
-                type,
-                payload: 111,
-                meta: 222
+                _options: {
+                    separator: '='
+                }
             })
 
-            expect(actionCreators.alert('foo')).toEqual({
-                type: type2,
-                payload: 'foo',
-                meta: 444
+            expect(action.dialog(1, 2)).toEqual({
+                type: 'namespace/dialog',
+                payload: { arg1: 1, arg2: 2 },
+                meta: 2
+            })
+
+            expect(action.dialog.close(1, 2)).toEqual({
+                type: 'namespace/dialog=<xxxclosexxx',
+                payload: { data: 1 },
+                meta: { data: 2 }
+            })
+
+            expect(action.dialog.close.do(1, 2)).toEqual({
+                type: 'namespace/dialog=<xxxclosexxx*<DO>',
+                payload: 1,
+                meta: 2
             })
         })
 
@@ -321,7 +316,7 @@ describe('createActions module', () => {
             })
         })
 
-        it.only('support _options', () => {
+        it('support _options', () => {
             const namespace = 'my-namespace'
 
             const actionCreators = createActions(
@@ -329,7 +324,15 @@ describe('createActions module', () => {
                 {
                     dialog: {
                         open: {},
-                        close: {},
+                        close: {
+                            deepAction: {},
+                            _options: {
+                                prefix: '-',
+                                suffix: '+',
+                                separator: '\\',
+                                transform: key => `$${key}`
+                            }
+                        },
                         _options: {
                             prefix: '[',
                             separator: '/',
@@ -341,6 +344,7 @@ describe('createActions module', () => {
                     },
                     _options: {
                         prefix: '<',
+                        separator: '=',
                         suffix: '>',
                         transform: key => `key:${key}`
                     }
@@ -359,7 +363,11 @@ describe('createActions module', () => {
             })
 
             expect(actionCreators.dialog.open()).toEqual({
-                type: 'my-namespace:<key:dialog>/[OPEN>'
+                type: 'my-namespace:<key:dialog>=[OPEN>'
+            })
+
+            expect(actionCreators.dialog.close.deepAction()).toEqual({
+                type: 'my-namespace:<key:dialog>=[CLOSE>/-$deepAction+'
             })
 
             expect(actionCreators.other()).toEqual({
@@ -367,7 +375,7 @@ describe('createActions module', () => {
             })
 
             expect(actionCreators.other.test()).toEqual({
-                type: 'my-namespace:<key:other>:<key:test>'
+                type: 'my-namespace:<key:other>=<key:test>'
             })
         })
     })
