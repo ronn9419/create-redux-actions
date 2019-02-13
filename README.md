@@ -50,6 +50,7 @@ action.action2.nestedAction('sample-payload', 'sample-meta')
  *   }
  */
 ```
+- Note that `action.action2` is also an action. This allows for flexibility,  easier code refactoring.
 
 ## Creating Single Action
 
@@ -96,6 +97,32 @@ action.login('user', '123456')
  *      }
  *  }
  * /
+```
+
+# Customizing Action with Nested Action
+You can also customize action with nested action by assigning an array to the action instead of an object.
+```js
+const action = createActions('myNamespace', {
+    action1: [
+        (arg1, arg2) => [{arg1, arg2}, arg2, false], // payload creator
+        {
+            action2: {},                             // nested actions
+            action3: {}
+        }
+    ]
+})
+
+action.action1('foo', 'bar')
+/* {
+ *      type: 'myNamespace',
+ *      payload: {
+ *          arg1: 'foo',
+ *          arg2: 'bar'
+ *      },
+ *      meta: 'bar',
+ *      error: false
+ * }
+ */
 ```
 
 # Handling Actions
