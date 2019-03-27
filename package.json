@@ -1,6 +1,6 @@
 {
     "name": "create-redux-actions",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "create-redux-actions",
     "main": "lib/index.js",
     "module": "es/index.js",
