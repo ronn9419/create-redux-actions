@@ -1,15 +1,19 @@
 import createActions from '../../createActions'
 import handleActions from '../../handleActions'
 import { extractKey } from '../../modules/createCustomKey'
-import { multi, key, extractData } from '../../modules/handleMultiActions'
+import {
+    combineActions,
+    key,
+    extractData
+} from '../../modules/handleCombineActions'
 
-describe('HandleNestedActions module', () => {
+describe('handleCombineActions module', () => {
     it('creates desired key for handleActions', () => {
         const action = createActions('test-action', {
             test: {}
         })
 
-        const result = multi(action)
+        const result = combineActions(action)
         const extracted = extractKey(result)
 
         expect(extracted).toEqual([key, [action.toString()]])
@@ -22,7 +26,7 @@ describe('HandleNestedActions module', () => {
             test3: {}
         })
 
-        const result = multi(action.test1, action.test2, action.test3)
+        const result = combineActions(action.test1, action.test2, action.test3)
         const extracted = extractKey(result)
 
         expect(extracted).toEqual([
@@ -46,7 +50,11 @@ describe('HandleNestedActions module', () => {
 
         const handlers = handleActions(
             {
-                [multi(action.test1, action.test2, action.test3)]: testHandler
+                [combineActions(
+                    action.test1,
+                    action.test2,
+                    action.test3
+                )]: testHandler
             },
             {}
         )
@@ -70,7 +78,7 @@ describe('HandleNestedActions module', () => {
         expect(() =>
             handleActions(
                 {
-                    [multi(
+                    [combineActions(
                         action.test1,
                         action.test2,
                         action.test3
@@ -79,7 +87,7 @@ describe('HandleNestedActions module', () => {
                 {}
             )
         ).toThrowErrorMatchingInlineSnapshot(
-            `"Multi handler value must be a function"`
+            `"CombineActions handler value must be a function"`
         )
     })
 })

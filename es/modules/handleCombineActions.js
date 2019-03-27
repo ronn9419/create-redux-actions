@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.multiHandler = exports.extractData = exports.isMulti = exports.multi = exports.key = void 0;
+exports.combineActionsHandler = exports.extractData = exports.isCombined = exports.combineActions = exports.key = void 0;
 
 var _isFunction = _interopRequireDefault(require("../utils/isFunction"));
 
@@ -12,9 +12,9 @@ var _createCustomKey = require("./createCustomKey");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* eslint-disable array-callback-return,no-else-return */
-var key = '__multi__';
+var key = '__combine__';
 exports.key = key;
-var multi = (0, _createCustomKey.createKey)(function () {
+var combineActions = (0, _createCustomKey.createKey)(function () {
   for (var _len = arguments.length, actions = new Array(_len), _key = 0; _key < _len; _key++) {
     actions[_key] = arguments[_key];
   }
@@ -24,16 +24,16 @@ var multi = (0, _createCustomKey.createKey)(function () {
   });
   return [key, strActions];
 });
-exports.multi = multi;
+exports.combineActions = combineActions;
 
-var isMulti = function isMulti(data) {
+var isCombined = function isCombined(data) {
   return data[0] === key;
 };
 
-exports.isMulti = isMulti;
+exports.isCombined = isCombined;
 
 var extractData = function extractData(key) {
-  if (key && !isMulti(key)) {
+  if (key && !isCombined(key)) {
     return null;
   }
 
@@ -42,9 +42,9 @@ var extractData = function extractData(key) {
 
 exports.extractData = extractData;
 
-var multiHandler = function multiHandler(key, value) {
+var combineActionsHandler = function combineActionsHandler(key, value) {
   if (!(0, _isFunction.default)(value)) {
-    throw new Error('Multi handler value must be a function');
+    throw new Error('CombineActions handler value must be a function');
   }
 
   var data = extractData(key);
@@ -54,4 +54,4 @@ var multiHandler = function multiHandler(key, value) {
   }, {})];
 };
 
-exports.multiHandler = multiHandler;
+exports.combineActionsHandler = combineActionsHandler;

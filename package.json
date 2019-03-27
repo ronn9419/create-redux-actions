@@ -3,10 +3,12 @@
     "version": "0.1.2",
     "description": "create-redux-actions",
     "main": "lib/index.js",
+    "module": "es/index.js",
     "scripts": {
         "test": "jest",
         "lint": "xo src !src/**/*.spec.js !src/**/*.test.js",
         "build": "run-s clean && run-p build:**",
+        "build:esm": "cross-env BABEL_ENV=esm babel src --out-dir es --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\",\"src/**/__tests__\",\"src/**/__mocks__\"",
         "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\",\"src/**/__tests__\",\"src/**/__mocks__\"",
         "clean": "rimraf coverage dist es lib",
         "format": "prettier --write \"**/*.{js,md}\"",
@@ -74,7 +76,6 @@
     "files": [
         "es",
         "lib",
-        "dist",
         "src"
     ],
     "jest": {

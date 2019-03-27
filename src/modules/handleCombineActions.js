@@ -3,26 +3,26 @@
 import isFunction from '../utils/isFunction'
 import { createKey } from './createCustomKey'
 
-export const key = '__multi__'
+export const key = '__combine__'
 
-export const multi = createKey((...actions) => {
+export const combineActions = createKey((...actions) => {
     const strActions = actions.map(action => action.toString())
     return [key, strActions]
 })
 
-export const isMulti = data => data[0] === key
+export const isCombined = data => data[0] === key
 
 export const extractData = key => {
-    if (key && !isMulti(key)) {
+    if (key && !isCombined(key)) {
         return null
     }
 
     return key[1]
 }
 
-export const multiHandler = (key, value) => {
+export const combineActionsHandler = (key, value) => {
     if (!isFunction(value)) {
-        throw new Error('Multi handler value must be a function')
+        throw new Error('CombineActions handler value must be a function')
     }
 
     const data = extractData(key)
